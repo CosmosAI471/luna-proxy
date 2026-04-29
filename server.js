@@ -40,3 +40,4 @@ app.post('/chat', async (req, res) => {
 });
 
 app.listen(process.env.PORT || 3000, () => console.log('Shield is active and logging!'));
+// Working?
