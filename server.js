@@ -6,11 +6,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const HF_URL = process.env.HF_URL; 
-const HF_KEY = process.env.HF_KEY;
+// Remove accidental blank spaces from the URLs and Keys!
+const HF_URL = process.env.HF_URL ? process.env.HF_URL.trim() : ""; 
+const HF_KEY = process.env.HF_KEY ? process.env.HF_KEY.trim() : "";
 
 app.post('/chat', async (req, res) => {
     console.log("--- New Request Received from Frontend ---");
+    console.log("Data going to HF:", JSON.stringify(req.body)); // <--- NEW X-RAY LOG
+
     try {
         const response = await fetch(HF_URL, {
             method: 'POST',
@@ -23,7 +26,7 @@ app.post('/chat', async (req, res) => {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("HF Space Error Response:", errorText);
+            console.error(`HF Space Error (${response.status}):`, errorText);
             return res.status(response.status).json({ error: "HF Space rejected the request." });
         }
 
