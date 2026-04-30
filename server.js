@@ -10,13 +10,20 @@ const HF_URL = process.env.HF_URL ? process.env.HF_URL.trim() : "";
 
 app.post('/chat', async (req, res) => {
     console.log("--- New Request Received from Frontend ---");
+    
+    // --- THE MAGIC FIX ---
+    // The Python server rejected "luna-model". We rewrite it to the exact file name 
+    // right before sending it, so the backend recognizes it!
+    req.body.model = "qwen2.5-coder-7b-instruct-q4_k_m.gguf"; 
+
     console.log("Data going to HF:", JSON.stringify(req.body));
 
     try {
         const response = await fetch(HF_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json' // <--- NO MORE AUTHORIZATION HEADER
+                'Content-Type': 'application/json',
+                'User-Agent': 'Luna-Proxy/1.0' // Keeps the HF firewall happy
             },
             body: JSON.stringify(req.body)
         });
